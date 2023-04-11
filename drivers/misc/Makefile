@@ -93,3 +93,4 @@ obj-$(CONFIG_OKL4_GUEST)        += okl4-panic.o
 obj-$(CONFIG_OKL4_LINK_SHBUF)    += okl4-link-shbuf.o
 
 obj-$(CONFIG_SIMTRAY_STATUS)	+= simtray.o
+obj-$(CONFIG_LYB_THERMAL) += lyb_thermal_qcom.o
