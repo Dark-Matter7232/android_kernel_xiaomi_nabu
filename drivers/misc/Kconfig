@@ -600,6 +600,13 @@ config SIMTRAY_STATUS
 	help
 	  Say 'y' here to support SIM tray GPIO detection
 
+config LYB_THERMAL
+	bool "Lybxlpsv's thermal settings driver"
+	default n
+	help
+	   This is not to be used by an amateur as this may cause damage to
+	   the device so use it at your own risk. If in any doubt about, say N.
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
