@@ -36,12 +36,12 @@
 
 		opp-257000000 {
 			opp-hz = /bits/ 64 <257000000>;
-			opp-microvolt = <25>; // MIN
+			opp-microvolt = <30>; // MIN
 		};
 
 		opp-150000000 {
 			opp-hz = /bits/ 64 <150000000>;
-			opp-microvolt = <20>; // MIN
+			opp-microvolt = <25>; // MIN
 		};
 	};
 };
