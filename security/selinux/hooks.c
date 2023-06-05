@@ -5985,47 +5985,47 @@ static int selinux_shm_shmat(struct shmid_kernel *shp,
 }
 
 /* Semaphore security operations */
-static int selinux_sem_alloc_security(struct kern_ipc_perm *sma)
+static int selinux_sem_alloc_security(struct sem_array *sma)
 {
 	struct ipc_security_struct *isec;
 	struct common_audit_data ad;
 	u32 sid = current_sid();
 	int rc;
 
-	rc = ipc_alloc_security(sma, SECCLASS_SEM);
+	rc = ipc_alloc_security(&sma->sem_perm, SECCLASS_SEM);
 	if (rc)
 		return rc;
 
-	isec = sma->security;
+	isec = sma->sem_perm.security;
 
 	ad.type = LSM_AUDIT_DATA_IPC;
-	ad.u.ipc_id = sma->key;
+	ad.u.ipc_id = sma->sem_perm.key;
 
 	rc = avc_has_perm(&selinux_state,
 			  sid, isec->sid, SECCLASS_SEM,
 			  SEM__CREATE, &ad);
 	if (rc) {
-		ipc_free_security(sma);
+		ipc_free_security(&sma->sem_perm);
 		return rc;
 	}
 	return 0;
 }
 
-static void selinux_sem_free_security(struct kern_ipc_perm *sma)
+static void selinux_sem_free_security(struct sem_array *sma)
 {
-	ipc_free_security(sma);
+	ipc_free_security(&sma->sem_perm);
 }
 
-static int selinux_sem_associate(struct kern_ipc_perm *sma, int semflg)
+static int selinux_sem_associate(struct sem_array *sma, int semflg)
 {
 	struct ipc_security_struct *isec;
 	struct common_audit_data ad;
 	u32 sid = current_sid();
 
-	isec = sma->security;
+	isec = sma->sem_perm.security;
 
 	ad.type = LSM_AUDIT_DATA_IPC;
-	ad.u.ipc_id = sma->key;
+	ad.u.ipc_id = sma->sem_perm.key;
 
 	return avc_has_perm(&selinux_state,
 			    sid, isec->sid, SECCLASS_SEM,
@@ -6033,7 +6033,7 @@ static int selinux_sem_associate(struct kern_ipc_perm *sma, int semflg)
 }
 
 /* Note, at this point, sma is locked down */
-static int selinux_sem_semctl(struct kern_ipc_perm *sma, int cmd)
+static int selinux_sem_semctl(struct sem_array *sma, int cmd)
 {
 	int err;
 	u32 perms;
@@ -6072,11 +6072,11 @@ static int selinux_sem_semctl(struct kern_ipc_perm *sma, int cmd)
 		return 0;
 	}
 
-	err = ipc_has_perm(sma, perms);
+	err = ipc_has_perm(&sma->sem_perm, perms);
 	return err;
 }
 
-static int selinux_sem_semop(struct kern_ipc_perm *sma,
+static int selinux_sem_semop(struct sem_array *sma,
 			     struct sembuf *sops, unsigned nsops, int alter)
 {
 	u32 perms;
@@ -6086,7 +6086,7 @@ static int selinux_sem_semop(struct kern_ipc_perm *sma,
 	else
 		perms = SEM__READ;
 
-	return ipc_has_perm(sma, perms);
+	return ipc_has_perm(&sma->sem_perm, perms);
 }
 
 static int selinux_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
