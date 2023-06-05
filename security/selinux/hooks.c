@@ -5889,47 +5889,47 @@ static int selinux_msg_queue_msgrcv(struct msg_queue *msq, struct msg_msg *msg,
 }
 
 /* Shared Memory security operations */
-static int selinux_shm_alloc_security(struct kern_ipc_perm *shp)
+static int selinux_shm_alloc_security(struct shmid_kernel *shp)
 {
 	struct ipc_security_struct *isec;
 	struct common_audit_data ad;
 	u32 sid = current_sid();
 	int rc;
 
-	rc = ipc_alloc_security(shp, SECCLASS_SHM);
+	rc = ipc_alloc_security(&shp->shm_perm, SECCLASS_SHM);
 	if (rc)
 		return rc;
 
-	isec = shp->security;
+	isec = shp->shm_perm.security;
 
 	ad.type = LSM_AUDIT_DATA_IPC;
-	ad.u.ipc_id = shp->key;
+	ad.u.ipc_id = shp->shm_perm.key;
 
 	rc = avc_has_perm(&selinux_state,
 			  sid, isec->sid, SECCLASS_SHM,
 			  SHM__CREATE, &ad);
 	if (rc) {
-		ipc_free_security(shp);
+		ipc_free_security(&shp->shm_perm);
 		return rc;
 	}
 	return 0;
 }
 
-static void selinux_shm_free_security(struct kern_ipc_perm *shp)
+static void selinux_shm_free_security(struct shmid_kernel *shp)
 {
-	ipc_free_security(shp);
+	ipc_free_security(&shp->shm_perm);
 }
 
-static int selinux_shm_associate(struct kern_ipc_perm *shp, int shmflg)
+static int selinux_shm_associate(struct shmid_kernel *shp, int shmflg)
 {
 	struct ipc_security_struct *isec;
 	struct common_audit_data ad;
 	u32 sid = current_sid();
 
-	isec = shp->security;
+	isec = shp->shm_perm.security;
 
 	ad.type = LSM_AUDIT_DATA_IPC;
-	ad.u.ipc_id = shp->key;
+	ad.u.ipc_id = shp->shm_perm.key;
 
 	return avc_has_perm(&selinux_state,
 			    sid, isec->sid, SECCLASS_SHM,
@@ -5937,7 +5937,7 @@ static int selinux_shm_associate(struct kern_ipc_perm *shp, int shmflg)
 }
 
 /* Note, at this point, shp is locked down */
-static int selinux_shm_shmctl(struct kern_ipc_perm *shp, int cmd)
+static int selinux_shm_shmctl(struct shmid_kernel *shp, int cmd)
 {
 	int perms;
 	int err;
@@ -5967,11 +5967,11 @@ static int selinux_shm_shmctl(struct kern_ipc_perm *shp, int cmd)
 		return 0;
 	}
 
-	err = ipc_has_perm(shp, perms);
+	err = ipc_has_perm(&shp->shm_perm, perms);
 	return err;
 }
 
-static int selinux_shm_shmat(struct kern_ipc_perm *shp,
+static int selinux_shm_shmat(struct shmid_kernel *shp,
 			     char __user *shmaddr, int shmflg)
 {
 	u32 perms;
@@ -5981,7 +5981,7 @@ static int selinux_shm_shmat(struct kern_ipc_perm *shp,
 	else
 		perms = SHM__READ | SHM__WRITE;
 
-	return ipc_has_perm(shp, perms);
+	return ipc_has_perm(&shp->shm_perm, perms);
 }
 
 /* Semaphore security operations */
