@@ -1173,7 +1173,7 @@ static void sde_kms_complete_commit(struct msm_kms *kms,
 		SDE_ATRACE_END("post_kickoff");
 
 		if (rc) {
-			pr_debug_once("Connector Post kickoff failed rc=%d\n",
+			pr_err("Connector Post kickoff failed rc=%d\n",
 					 rc);
 		}
 		sde_connector_fod_notify(connector);

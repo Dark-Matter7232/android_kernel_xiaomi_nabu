@@ -1445,7 +1445,7 @@ static u32 _sde_crtc_get_displays_affected(struct drm_crtc *crtc,
 	bool is_ppsplit = false;
 
 	if (!crtc || !state) {
-		pr_debug_once("Invalid crtc or state\n");
+		pr_err("Invalid crtc or state\n");
 		return 0;
 	}
 
@@ -3184,7 +3184,7 @@ void sde_crtc_fod_ui_ready(struct drm_crtc *crtc,
 		finger_down = cstate->finger_down;
 		notify_data.data = &finger_down;
 		notify_data.is_primary = true;
-		pr_debug_once("fingerprint status: %s",
+		pr_err("fingerprint status: %s",
 			      finger_down ? "pressed" : "up");
 		dsi_display->panel->fod_ui_ready = finger_down;
 		SDE_ATRACE_BEGIN("fod_event_notify");
@@ -3341,7 +3341,7 @@ static int sde_crtc_config_fingerprint_dim_layer(struct drm_crtc_state *crtc_sta
 	cstate = to_sde_crtc_state(crtc_state);
 
 	if (cstate->num_dim_layers == SDE_MAX_DIM_LAYERS - 1) {
-		pr_debug_once("failed to get available dim layer for custom\n");
+		pr_err("failed to get available dim layer for custom\n");
 		return -EINVAL;
 	}
 

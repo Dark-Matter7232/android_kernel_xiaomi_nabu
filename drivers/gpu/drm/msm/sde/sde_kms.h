@@ -64,7 +64,7 @@
 #define SDE_DEBUG_DRIVER(fmt, ...)                                         \
 	no_printk(fmt, ##__VA_ARGS__)
 
-#define SDE_ERROR(fmt, ...) pr_debug_once("[sde error]" fmt, ##__VA_ARGS__)
+#define SDE_ERROR(fmt, ...) pr_err("[sde error]" fmt, ##__VA_ARGS__)
 
 #define SDE_DEFERRED_ERROR(fmt, ...) printk_deferred(KERN_ERR "[sde error]" fmt, ##__VA_ARGS__)
 
