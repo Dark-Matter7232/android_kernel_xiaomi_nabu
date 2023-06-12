@@ -10,7 +10,6 @@
 #include <linux/sysctl.h>
 #include <linux/gfp.h>
 #include "internal.h"
-#include <linux/binfmts.h>
 
 /* A global variable is a bit ugly, but it keeps the code simple */
 int sysctl_drop_caches;
@@ -51,9 +50,6 @@ int drop_caches_sysctl_handler(struct ctl_table *table, int write,
 	void __user *buffer, size_t *length, loff_t *ppos)
 {
 	int ret;
-
-	if (task_is_booster(current))
-		return 0;
 
 	ret = proc_dointvec_minmax(table, write, buffer, length, ppos);
 	if (ret)
